@@ -42,7 +42,7 @@
         <echo>Got SHA-512 checksum : &lt;${sha512}&gt;</echo>
     </target>
     
-    <target name="make"
+    <target name="make-nuspec"
             description="Prepare all files for a new Liquibase release."
             depends="load.sha512.as.property">
         <echo>Preparing &lt;liquibase.nuspec&gt; file : injecting liquibase version...</echo>
@@ -62,5 +62,24 @@
         <replace file="tools/chocolateyUninstall.ps1" token="@LIQUIBASE_VERSION@" value="${liquibase.version}"/>
         <echo>&lt;chocolateyUninstall.ps1&gt; file prepared.</echo>
 		<echo>All build files prepared.</echo>
+		
+		<echo>Preparing &lt;release.ps1&gt; ...</echo>
+        <copy file="templates/release.ps1.TEMPLATE" tofile="release.ps1"/>
+        <replace file="release.ps1" token="@LIQUIBASE_VERSION@" value="${liquibase.version}"/>
+        <echo>&lt;release.ps1&gt; file prepared.</echo>
     </target>
+	
+	<target name="make" 
+            depends="make-nuspec"
+            description="Build nupkg chocolatey package.">
+            <exec executable="cmd">
+                <arg value="/c"/>
+                <arg value="choco install --yes -fdv liquibase.nuspec"/>
+            </exec>
+            
+            <echo>Release command :</echo>
+            <echo>choco push liquibase.${liquibase.version}.nupkg -s https://chocolatey.org/ -apikey *******</echo>
+    </target>
+	
+	
 </project>
