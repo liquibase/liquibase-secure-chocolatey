@@ -5,7 +5,7 @@
     <title>Liquibase</title>
     <version>@LIQUIBASE_VERSION@</version>
     <authors>Liquibase</authors>
-    <owners>Anthony Mastrean</owners>
+    <owners>Adrien SALES</owners>
     <summary>An open source library for tracking, managing, and applying database changes.</summary>
     <description>
 Liquibase is an open source, database-independent library for tracking, managing and applying database changes. It is built on a simple premise: All database changes are stored in a human readable yet trackable form and checked into source control.
