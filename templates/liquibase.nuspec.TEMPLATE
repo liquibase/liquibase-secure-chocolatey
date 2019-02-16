@@ -14,15 +14,15 @@ Liquibase is an open source, database-independent library for tracking, managing
     <tags>db change management</tags>
     <licenseUrl>https://github.com/liquibase/liquibase/blob/master/LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <iconUrl>https://cdn.rawgit.com/AnthonyMastrean/chocolateypackages/17c712c0bf345eb3dcb8326049a8198230228008/public/icons/liquibase.png</iconUrl>
-    <packageSourceUrl>https://github.com/AnthonyMastrean/chocolateypackages/tree/master/packages/liquibase</packageSourceUrl>
+    <iconUrl>https://raw.githubusercontent.com/adriens/chocolatey-liquibase/master/liquibase.png</iconUrl>
+    <packageSourceUrl>https://github.com/adriens/chocolatey-liquibase</packageSourceUrl>
     <releaseNotes>https://github.com/liquibase/liquibase/releases/tag/liquibase-parent-@LIQUIBASE_VERSION@</releaseNotes>
     <docsUrl>http://www.liquibase.org/documentation/index.html</docsUrl>
     <bugTrackerUrl>https://liquibase.jira.com/</bugTrackerUrl>
     <projectSourceUrl>https://github.com/liquibase/liquibase</projectSourceUrl>
     <mailingListUrl>http://www.liquibase.org/blog/</mailingListUrl>
     <dependencies>
-      <dependency id="jdk8" version="[8.0,)" />
+      <dependency id="jre8" version="[8.0,)" />
     </dependencies>
   </metadata>
   <files>
