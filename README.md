@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/3avdga24cmxict48?svg=true)](https://ci.appveyor.com/project/adriens/chocolatey-liquibase)
+
 # Liquibase chocolatey package
 
 To prepare a new Liquibase release, two ways : manually or helped by
