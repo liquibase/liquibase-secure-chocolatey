@@ -1,0 +1,14 @@
+﻿$tools = Split-Path $MyInvocation.MyCommand.Definition
+$content = Join-Path (Split-Path $tools) 'content'
+$bat = Join-Path $content 'liquibase.bat'
+
+Install-ChocolateyZipPackage `
+  -PackageName 'liquibase' `
+  -Url 'https://github.com/liquibase/liquibase/releases/download/liquibase-parent-@LIQUIBASE_VERSION@/liquibase-@LIQUIBASE_VERSION@-bin.zip' `
+  -Checksum '@SHA512@' `
+  -ChecksumType 'SHA512' `
+  -UnzipLocation $content
+
+Install-BinFile `
+  -Name 'liquibase' `
+  -Path $bat
