@@ -1,4 +1,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/3avdga24cmxict48?svg=true)](https://ci.appveyor.com/project/adriens/chocolatey-liquibase)
+[![Chocolatey](https://img.shields.io/chocolatey/v/liquibase.svg)](https://chocolatey.org/packages/liquibase)
+[![Chocolatey](https://img.shields.io/chocolatey/dt/liquibase.svg)](https://chocolatey.org/packages/liquibase)
+
 
 # Liquibase chocolatey package
 
