@@ -5,10 +5,9 @@
 
 # Liquibase chocolatey package
 
-To prepare a new Liquibase release, two ways : manually or helped by
-`ant` build script.
+The aim of this project is to make the release process of liquibase package as easy and fast as possible so it will stay as close as possible from Liquibase release pipe.
 
-## Build
+## Continous build
 
 1. Update Liquibase version in `liquibase.properties`
 2. Run `ant make`
