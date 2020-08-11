@@ -30,9 +30,14 @@
 		description="Get the SHA512 checksum from Liquibase Github official release.">
 	<echo>Downloading zip distribution file from Github...</echo>
 	<mkdir dir="work"/>
-	<get src="https://github.com/liquibase/liquibase/releases/download/liquibase-parent-${liquibase.version}/liquibase-${liquibase.version}-bin.zip"
-             dest="work/liquibase-${liquibase.version}-bin.zip"/>
-    <get src="http://central.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" dest="work/slf4j-api-1.7.25.jar"/>
+    <!-- 
+        https://github.com/liquibase/liquibase/releases/download/v${liquibase.version}/liquibase-${liquibase.version}.zip
+    -->
+	<get 
+    
+        src="https://github.com/liquibase/liquibase/releases/download/v${liquibase.version}/liquibase-${liquibase.version}.zip"
+        dest="work/liquibase-${liquibase.version}-bin.zip"/>
+    <!--<get src="http://central.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" dest="work/slf4j-api-1.7.25.jar"/>-->
 	</target>
    
     <target name="load.sha512.as.property" depends="get.sha512" description="Loads the sha512 checksum as a property.">
