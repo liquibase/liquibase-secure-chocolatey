@@ -1,0 +1,7 @@
+/*.nupkg
+/release.ps1
+/liquibase.nuspec
+/tools/chocolateyInstall.ps1
+/tools/chocolateyUninstall.ps1
+/work/*.zip
+/work/*.asc
