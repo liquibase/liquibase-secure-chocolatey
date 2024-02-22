@@ -1,0 +1,27 @@
+name: Manual Build and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      liquibase_version:
+        description: 'Liquibase version to deploy'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Install Chocolatey
+      run: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    
+    - name: Install Ant
+      run: choco install ant
+      
+    - name: Build with Ant
+      env:
+        CHOCO_APIKEY: ${{secrets.CHOCO_APIKEY}}
+        LIQUIBASE_VERSION: ${{ inputs.liquibase_version }}
+      run: ant make
+
