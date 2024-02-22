@@ -31,6 +31,9 @@ jobs:
     - name: Choco pack
       run: |
         choco pack
+    
+    - name: Install OpenJDK8
+      run: choco install openjdk8
 
     - name: Choco install
       run: |
