@@ -22,15 +22,18 @@ jobs:
     - name: Install Ant
       run: choco install ant
       
-    - name: Build with Ant
+    - name: Build nupkg chocolatey package
       env:
         CHOCO_APIKEY: ${{secrets.CHOCO_APIKEY}}
         LIQUIBASE_VERSION: ${{ inputs.liquibase_version }}
-      run: ant make
+      run: ant make-nuspec
 
-    - name: Install locally
+    - name: Choco pack
       run: |
         choco pack
-        choco install --yes -fdv liquibase.nuspec
+
+    - name: Choco install
+      run: |
+        choco install liquibase.${{ inputs.liquibase_version }} --debug --verbose --source .
         liquibase --version
 
