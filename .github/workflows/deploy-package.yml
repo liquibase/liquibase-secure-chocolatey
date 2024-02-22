@@ -34,6 +34,6 @@ jobs:
 
     - name: Choco install
       run: |
-        choco install ./liquibase.${{ inputs.liquibase_version }}.nupkg
+        choco install ./liquibase.${{ inputs.liquibase_version }}.nupkg  --debug --verbose 
         liquibase --version
 
