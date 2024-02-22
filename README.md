@@ -1,4 +1,4 @@
-![CI](https://github.com/liquibase/liquibase-chocolatey/actions/workflows//Users/jandro/workspace/liquibase/deploy-package.yml/badge.svg)
+![CI](https://github.com/liquibase/liquibase-chocolatey/actions/workflows/deploy-package.yml/badge.svg)
 [![Chocolatey](https://img.shields.io/chocolatey/v/liquibase.svg)](https://chocolatey.org/packages/liquibase)
 [![Chocolatey](https://img.shields.io/chocolatey/dt/liquibase.svg)](https://chocolatey.org/packages/liquibase)
 
@@ -9,4 +9,4 @@ The aim of this project is to make the release process of liquibase package as e
 
 ## Continous build
 
-Build and deploy process is triggered from [liquibase/liquibase](https://github.com/liquibase/liquibase) every time a new `liquibase` version is released. Check ![deploy-package.yml](.github/workflows/deploy-package.yml) for more details.
+The build and deploy process is triggered from [liquibase/liquibase](https://github.com/liquibase/liquibase) every time a new `liquibase` version is released. Check [deploy-package.yml](.github/workflows/deploy-package.yml) for more details.
