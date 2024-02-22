@@ -66,5 +66,22 @@
         <replace file="release.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>&lt;release.ps1&gt; file prepared.</echo>
     </target>
-    
+	
+	<target name="make" 
+            depends="make-nuspec"
+            description="Build nupkg chocolatey package.">
+            <property environment="env"/>
+            <exec executable="cmd">
+                <arg value="/c"/>
+                <arg value="choco pack"/>
+            </exec>
+            <exec executable="cmd">
+                <arg value="/c"/>
+                <arg value="choco install --yes -fdv liquibase.nuspec"/>
+            </exec>
+            
+            <echo>Release command:</echo>
+            <echo>choco push liquibase.${env.LIQUIBASE_VERSION}.nupkg -s https://chocolatey.org/ -apikey ${env.CHOCO_APIKEY}</echo>
+    </target>
+	
 </project>
