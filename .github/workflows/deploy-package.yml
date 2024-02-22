@@ -2,16 +2,18 @@ name: Choco Build and Deploy
 
 on:
   workflow_dispatch:
+  workflow_call:
     inputs:
-      liquibase_version:
-        description: 'Liquibase version to deploy'
+      version:
+        description: 'Value from the version field in pom.xml. i.e 4.26.0'
+        type: string
         required: true
 
 jobs:
   build_and_deploy:
     runs-on: windows-latest
     env:
-      LIQUIBASE_VERSION: ${{ inputs.liquibase_version }}
+      LIQUIBASE_VERSION: ${{ inputs.version }}
 
     steps:
     - name: Checkout code
@@ -36,9 +38,9 @@ jobs:
 
     - name: Choco install
       run: |
-        choco install liquibase --version="${{ inputs.liquibase_version }}" --source="." --debug --verbose
+        choco install liquibase --version="${{ inputs.version }}" --source="." --debug --verbose
         liquibase --version
 
     - name: Choco push
       run: |
-        choco push liquibase.${{ inputs.liquibase_version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
+        choco push liquibase.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
