@@ -2,6 +2,11 @@ name: Choco Build and Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Value from the version field in pom.xml. i.e 4.26.0'
+        type: string
+        required: true
   workflow_call:
     inputs:
       version:
