@@ -1,7 +1,7 @@
 <?xml version = "1.0"?>
 <project name = "Liquibase chocolatey package build helper" 
          default = "info">
-    <target name = "info" description="Show some infos about this build file." depends="load.properties">
+    <target name = "info" description="Show some infos about this build file.">
         <echo>Ant build that helps preparing liquibase chocolatey releases.</echo>
     </target>
    
@@ -18,9 +18,7 @@
 		
     </target>
 	
-   
-    <target name="get.sha512" depends="load.properties"
-		description="Get the SHA512 checksum from Liquibase Github official release.">
+    <target name="get.sha512" description="Get the SHA512 checksum from Liquibase Github official release.">
     <property environment="env"/>
 	<echo>Downloading zip distribution file from Github...</echo>
 	<mkdir dir="work"/>
@@ -28,7 +26,6 @@
         https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip
     -->
 	<get 
-    
         src="https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip"
         dest="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip"/>
     <!--<get src="http://central.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" dest="work/slf4j-api-1.7.25.jar"/>-->
