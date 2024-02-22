@@ -75,12 +75,9 @@
                 <arg value="/c"/>
                 <arg value="choco install --yes -fdv liquibase.nuspec"/>
             </exec>
+            
             <echo>Release command:</echo>
             <echo>choco push liquibase.${env.LIQUIBASE_VERSION}.nupkg -s https://chocolatey.org/ -apikey ${env.CHOCO_APIKEY}</echo>
-            <exec executable="cmd">
-                <arg value="/c"/>
-                <arg value="choco push liquibase.${env.LIQUIBASE_VERSION}.nupkg -s https://chocolatey.org/ -apikey ${env.CHOCO_APIKEY}"/>
-            </exec>
     </target>
 	
 </project>

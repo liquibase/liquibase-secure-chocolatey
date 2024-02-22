@@ -8,7 +8,7 @@ on:
         required: true
 
 jobs:
-  deploy:
+  build_and_deploy:
     runs-on: windows-latest
 
     steps:
@@ -27,4 +27,10 @@ jobs:
         CHOCO_APIKEY: ${{secrets.CHOCO_APIKEY}}
         LIQUIBASE_VERSION: ${{ inputs.liquibase_version }}
       run: ant make
+
+    - name: Install locally
+      run: |
+        dir /s
+        choco install --yes -fdv liquibase.nuspec
+        liquibase --version
 
