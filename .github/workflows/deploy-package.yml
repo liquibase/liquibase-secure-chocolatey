@@ -1,4 +1,4 @@
-name: Manual Build and Deploy
+name: Choco Build and Deploy
 
 on:
   workflow_dispatch:
@@ -10,8 +10,11 @@ on:
 jobs:
   deploy:
     runs-on: windows-latest
-    
+
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Install Chocolatey
       run: |
         Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
