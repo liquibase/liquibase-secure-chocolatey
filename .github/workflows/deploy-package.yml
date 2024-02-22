@@ -10,6 +10,8 @@ on:
 jobs:
   build_and_deploy:
     runs-on: windows-latest
+    env:
+      LIQUIBASE_VERSION: ${{ inputs.liquibase_version }}
 
     steps:
     - name: Checkout code
@@ -23,9 +25,6 @@ jobs:
       run: choco install ant
       
     - name: Build nupkg Chocolatey package
-      env:
-        CHOCO_APIKEY: ${{secrets.CHOCO_APIKEY}}
-        LIQUIBASE_VERSION: ${{ inputs.liquibase_version }}
       run: ant make-nuspec
 
     - name: Choco pack
@@ -40,3 +39,6 @@ jobs:
         choco install liquibase --version="${{ inputs.liquibase_version }}" --source="." --debug --verbose
         liquibase --version
 
+    - name: Choco push
+      run: |
+        choco push liquibase.${{ inputs.liquibase_version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
