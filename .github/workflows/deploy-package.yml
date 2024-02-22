@@ -30,7 +30,7 @@ jobs:
 
     - name: Install locally
       run: |
-        dir /s
+        dir
         choco install --yes -fdv liquibase.nuspec
         liquibase --version
 
