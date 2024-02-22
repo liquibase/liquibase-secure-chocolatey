@@ -22,7 +22,7 @@ jobs:
     - name: Install Ant
       run: choco install ant
       
-    - name: Build nupkg chocolatey package
+    - name: Build nupkg Chocolatey package
       env:
         CHOCO_APIKEY: ${{secrets.CHOCO_APIKEY}}
         LIQUIBASE_VERSION: ${{ inputs.liquibase_version }}
@@ -34,6 +34,6 @@ jobs:
 
     - name: Choco install
       run: |
-        choco install liquibase.${{ inputs.liquibase_version }} --debug --verbose --source .
+        choco install ./liquibase.${{ inputs.liquibase_version }}.nupkg
         liquibase --version
 
