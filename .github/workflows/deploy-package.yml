@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Value from the version field in pom.xml. i.e 4.26.0'
+        description: "Value from the version field in pom.xml. i.e 4.26.0"
         type: string
         required: true
   workflow_call:
     inputs:
       version:
-        description: 'Value from the version field in pom.xml. i.e 4.26.0'
+        description: "Value from the version field in pom.xml. i.e 4.26.0"
         type: string
         required: true
 
@@ -21,31 +21,31 @@ jobs:
       LIQUIBASE_VERSION: ${{ inputs.version }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install Chocolatey
-      run: |
-        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    
-    - name: Install Ant
-      run: choco install ant
-      
-    - name: Build nupkg Chocolatey package
-      run: ant make-nuspec
+      - name: Install Chocolatey
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-    - name: Choco pack
-      run: |
-        choco pack
-    
-    - name: Install OpenJDK8
-      run: choco install openjdk8
+      - name: Install Ant
+        run: choco install ant
 
-    - name: Choco install
-      run: |
-        choco install liquibase --version="${{ inputs.version }}" --source="." --debug --verbose
-        liquibase --version
+      - name: Build nupkg Chocolatey package
+        run: ant make-nuspec
 
-    - name: Choco push
-      run: |
-        choco push liquibase.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
+      - name: Choco pack
+        run: |
+          choco pack
+
+      - name: Install Temurin 17
+        run: choco install temurin17
+
+      - name: Choco install
+        run: |
+          choco install liquibase --version="${{ inputs.version }}" --source="." --debug --verbose
+          liquibase --version
+
+      - name: Choco push
+        run: |
+          choco push liquibase.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
