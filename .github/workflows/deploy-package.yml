@@ -48,4 +48,4 @@ jobs:
 
       - name: Choco push
         run: |
-          choco push liquibase.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose -SkipDuplicate
+          choco push liquibase.${{ inputs.version }}.nupkg --source "https://push.chocolatey.org/" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose -SkipDuplicate
