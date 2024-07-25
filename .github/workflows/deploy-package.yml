@@ -46,7 +46,7 @@ jobs:
       - name: Choco install
         run: |
           choco install liquibase --version="${{ inputs.version }}" --source="." --debug --verbose
-          liquibase --version
+          #liquibase --version
 
       - name: Choco push
         run: |
