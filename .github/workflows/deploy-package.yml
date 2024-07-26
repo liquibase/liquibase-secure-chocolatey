@@ -26,6 +26,15 @@ jobs:
         with:
           repository: liquibase/liquibase-chocolatey
 
+      - name: Set up Java 17 (Temurin)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+    
+      - name: Verify Java version
+        run: java -version
+
       - name: Install Chocolatey
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -46,7 +55,7 @@ jobs:
       - name: Choco install
         run: |
           choco install liquibase --version="${{ inputs.version }}" --source="." --debug --verbose
-          #liquibase --version
+          liquibase --version
 
       - name: Choco push
         run: |
