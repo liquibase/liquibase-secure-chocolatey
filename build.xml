@@ -11,31 +11,34 @@
             <fileset dir="." includes="*.nupkg"/>
             <fileset dir="./work/" includes="*.asc"/>
             <fileset dir="./work/" includes="*.zip"/>
-			<fileset dir="./work/" includes="*.jar"/>
+            <fileset dir="./work/" includes="*.jar"/>
             <fileset dir="." includes="*.nuspec"/>
             <fileset dir="." includes="**/*.ps1"/>
         </delete>
-		
     </target>
-	
+    
     <target name="get.sha512" description="Get the SHA512 checksum from Liquibase Github official release.">
-    <property environment="env"/>
-	<echo>Downloading zip distribution file from Github...</echo>
-	<mkdir dir="work"/>
-    <!-- 
-        https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip
-    -->
-	<get 
-        src="https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip"
-        dest="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip"/>
-    <!--<get src="http://central.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" dest="work/slf4j-api-1.7.25.jar"/>-->
-	</target>
+        <property environment="env"/>
+        <echo>Downloading zip distribution file from Github...</echo>
+        <mkdir dir="work"/>
+        <!-- 
+            Downloading the file using curl with the Authorization header
+        -->
+        <exec executable="curl">
+            <arg value="-H"/>
+            <arg value="Authorization: token ${env.BOT_TOKEN}"/>
+            <arg value="-L"/>
+            <arg value="-o"/>
+            <arg value="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip"/>
+            <arg value="https://github.com/liquibase/${env.LIQUIBASE_VERSION}/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip"/>
+        </exec>
+    </target>
    
     <target name="load.sha512.as.property" depends="get.sha512" description="Loads the sha512 checksum as a property.">
         <property environment="env"/>
-		<echo>Generate SHA-512 checksum...</echo>
-		<checksum file="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip" algorithm="SHA-512" property="sha512"/>
-		<checksum file="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip" algorithm="SHA-512" fileext=".asc"/>
+        <echo>Generate SHA-512 checksum...</echo>
+        <checksum file="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip" algorithm="SHA-512" property="sha512"/>
+        <checksum file="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip" algorithm="SHA-512" fileext=".asc"/>
         <echo>Got SHA-512 checksum : &lt;${sha512}&gt;</echo>
     </target>
     
@@ -45,7 +48,6 @@
         <property environment="env"/>
         <echo>Preparing &lt;liquibase.nuspec&gt; file : injecting liquibase version...</echo>
         <copy file="templates/liquibase.nuspec.TEMPLATE" tofile="liquibase.nuspec"/>
-        <echo>Injecting target liquibase version in nuspec file...</echo>
         <replace file="liquibase.nuspec" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>nuspec file prepared.</echo>
         
@@ -59,12 +61,11 @@
         <copy file="templates/chocolateyUninstall.ps1.TEMPLATE" tofile="tools/chocolateyUninstall.ps1"/>
         <replace file="tools/chocolateyUninstall.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>&lt;chocolateyUninstall.ps1&gt; file prepared.</echo>
-		<echo>All build files prepared.</echo>
-		
-		<echo>Preparing &lt;release.ps1&gt; ...</echo>
+        <echo>All build files prepared.</echo>
+        
+        <echo>Preparing &lt;release.ps1&gt; ...</echo>
         <copy file="templates/release.ps1.TEMPLATE" tofile="release.ps1"/>
         <replace file="release.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>&lt;release.ps1&gt; file prepared.</echo>
     </target>
-	
 </project>
