@@ -7,12 +7,22 @@ on:
         description: "Value from the version field in pom.xml. i.e 4.26.0"
         type: string
         required: true
+      dry_run: 
+        description: 'Flag to indicate if the workflow is triggered to create a dry-run release'
+        required: true
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       version:
         description: "Value from the version field in pom.xml. i.e 4.26.0"
         type: string
         required: true
+      dry_run: 
+        description: 'Flag to indicate if the workflow is triggered to create a dry-run release'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build_and_deploy:
@@ -58,5 +68,6 @@ jobs:
           liquibase --version
 
       - name: Choco push
+        if: ${{ inputs.dry_run == false }}
         run: |
           choco push liquibase.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
