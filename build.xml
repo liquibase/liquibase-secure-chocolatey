@@ -30,7 +30,7 @@
             <arg value="-L"/>
             <arg value="-o"/>
             <arg value="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip"/>
-            <arg value="https://github.com/liquibase/${env.LIQUIBASE_VERSION}/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip"/>
+            <arg value="${env.RELEASE_URL}"/>
         </exec>
     </target>
    

@@ -12,6 +12,11 @@ on:
         required: true
         type: boolean
         default: false
+      dry_run_release_url: 
+        description: 'URL of the dry-run release'
+        required: true
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       version:
@@ -23,12 +28,18 @@ on:
         required: true
         type: boolean
         default: false
+      dry_run_release_url: 
+        description: 'URL of the dry-run release'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build_and_deploy:
     runs-on: windows-latest
     env:
       LIQUIBASE_VERSION: ${{ inputs.version }}
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -44,6 +55,14 @@ jobs:
     
       - name: Verify Java version
         run: java -version
+
+      - name: Set Draft url
+        if: ${{ inputs.dry_run == false }}
+        run: echo "RELEASE_URL=https://github.com/liquibase/${{ inputs.version }}/releases/download/v${{ inputs.version }}/liquibase-${{ inputs.version }}.zip" >> $GITHUB_ENV
+
+      - name: Set dry-run Draft url
+        if: ${{ inputs.dry_run == true }}
+        run: echo "RELEASE_URL=${{ inputs.dry_run_release_url }}/liquibase-${{ inputs.version }}.zip" >> $GITHUB_ENV
 
       - name: Install Chocolatey
         run: |
