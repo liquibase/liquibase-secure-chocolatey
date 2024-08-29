@@ -12,11 +12,10 @@ on:
         required: true
         type: boolean
         default: false
-      dry_run_release_url: 
-        description: 'URL of the dry-run release'
-        required: true
-        type: boolean
-        default: false
+      dry_run_zip_url: 
+        description: 'URL of the dry-run zip release'
+        required: false
+        type: string
   workflow_call:
     inputs:
       version:
@@ -28,18 +27,18 @@ on:
         required: true
         type: boolean
         default: false
-      dry_run_release_url: 
-        description: 'URL of the dry-run release'
-        required: true
-        type: boolean
-        default: false
+      dry_run_zip_url: 
+        description: 'URL of the dry-run zip release'
+        required: false
+        type: string
 
 jobs:
-  build_and_deploy:
+  build_and_deploy_choco:
     runs-on: windows-latest
     env:
       LIQUIBASE_VERSION: ${{ inputs.version }}
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      DRY_RUN_ZIP_URL: ${{ inputs.dry_run_zip_url }}
 
     steps:
       - name: Checkout code
@@ -56,14 +55,6 @@ jobs:
       - name: Verify Java version
         run: java -version
 
-      - name: Set Draft url
-        if: ${{ inputs.dry_run == false }}
-        run: echo "RELEASE_URL=https://github.com/liquibase/${{ inputs.version }}/releases/download/v${{ inputs.version }}/liquibase-${{ inputs.version }}.zip" >> $GITHUB_ENV
-
-      - name: Set dry-run Draft url
-        if: ${{ inputs.dry_run == true }}
-        run: echo "RELEASE_URL=${{ inputs.dry_run_release_url }}/liquibase-${{ inputs.version }}.zip" >> $GITHUB_ENV
-
       - name: Install Chocolatey
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -72,7 +63,14 @@ jobs:
         run: choco install ant
 
       - name: Build nupkg Chocolatey package
-        run: ant make-nuspec
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          ant make-nuspec
+
+      - name: Build nupkg Chocolatey package dry-run
+        if: ${{ inputs.dry_run == true }}
+        run: |
+          ant -f build_dry_run.xml make-nuspec
 
       - name: Choco pack
         run: |

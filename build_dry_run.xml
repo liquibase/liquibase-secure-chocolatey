@@ -25,9 +25,21 @@
     <!-- 
         https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip
     -->
-	<get 
-        src="https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip"
-        dest="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip"/>
+    <exec executable="curl">
+        <!-- Follow redirects -->
+        <arg value="-L"/>
+        <!-- Set the Accept header -->
+        <arg value="-H"/>
+        <arg value="Accept: application/octet-stream"/>
+        <!-- Set the Authorization header -->
+        <arg value="-H"/>
+        <arg value="Authorization: Token ${env.BOT_TOKEN}"/>
+        <!-- The URL to download from -->
+        <arg value="${env.DRY_RUN_ZIP_URL}"/>
+        <!-- Specify the output filename -->
+        <arg value="-o"/>
+        <arg value="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip"/>
+    </exec>
 	</target>
    
     <target name="load.sha512.as.property" depends="get.sha512" description="Loads the sha512 checksum as a property.">
