@@ -85,12 +85,6 @@ jobs:
           choco install liquibase --version="${{ inputs.version }}" --source="." --debug --verbose
           liquibase --version
 
-      - name: Choco install dry-run
-        if: ${{ inputs.dry_run == true }}
-        run: |
-          choco install liquibase --version="0.0.0" --source="." --debug --verbose
-          liquibase --version
-
       - name: Choco push
         if: ${{ inputs.dry_run == false }}
         run: |
