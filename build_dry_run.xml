@@ -55,7 +55,7 @@
             depends="load.sha512.as.property">
         <property environment="env"/>
         <echo>Preparing &lt;liquibase.nuspec&gt; file : injecting liquibase version...</echo>
-        <copy file="templates/liquibase.nuspec.TEMPLATE" tofile="liquibase.nuspec"/>
+        <copy file="templates/liquibase-dry-run.nuspec.TEMPLATE" tofile="liquibase.nuspec"/>
         <echo>Injecting target liquibase version in nuspec file...</echo>
         <replace file="liquibase.nuspec" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>nuspec file prepared.</echo>
