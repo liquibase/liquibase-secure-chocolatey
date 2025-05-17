@@ -37,6 +37,7 @@ jobs:
     runs-on: windows-latest
     env:
       LIQUIBASE_VERSION: ${{ inputs.version }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DRY_RUN_ZIP_URL: ${{ inputs.dry_run_zip_url }}
 
     steps:
@@ -65,20 +66,9 @@ jobs:
         if: ${{ inputs.dry_run == false }}
         run: |
           ant make-nuspec
-          
-      - name: Get GitHub App token
-        id: get-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.LIQUIBASE_GITHUB_APP_ID }}
-          private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          permission-contents: read
-    
+
       - name: Build nupkg Chocolatey package dry-run
         if: ${{ inputs.dry_run == true }}
-        env:
-          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
         run: |
           ant -f build_dry_run.xml make-nuspec
 
