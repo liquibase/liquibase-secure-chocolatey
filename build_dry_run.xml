@@ -33,7 +33,7 @@
         <arg value="Accept: application/octet-stream"/>
         <!-- Set the Authorization header -->
         <arg value="-H"/>
-        <arg value="Authorization: Token ${env.BOT_TOKEN}"/>
+        <arg value="Authorization: Token ${env.GITHUB_TOKEN}"/>
         <!-- The URL to download from -->
         <arg value="${env.DRY_RUN_ZIP_URL}"/>
         <!-- Specify the output filename -->

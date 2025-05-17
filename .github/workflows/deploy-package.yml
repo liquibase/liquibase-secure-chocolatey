@@ -37,7 +37,7 @@ jobs:
     runs-on: windows-latest
     env:
       LIQUIBASE_VERSION: ${{ inputs.version }}
-      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DRY_RUN_ZIP_URL: ${{ inputs.dry_run_zip_url }}
 
     steps:
