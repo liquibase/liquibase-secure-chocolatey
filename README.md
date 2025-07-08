@@ -74,22 +74,3 @@ By following these steps, you should be able to easily manage `Liquibase` using 
 ## Continuous build
 
 The build and deploy process is triggered from [liquibase/liquibase](https://github.com/liquibase/liquibase) every time a new `liquibase` version is released. Check [deploy-package.yml](.github/workflows/deploy-package.yml) for more details.
-
-## Release Tracking
-
-This repository includes automated release tracking for Chocolatey packages. The [chocolatey-release-tracking.yml](.github/workflows/chocolatey-release-tracking.yml) workflow monitors for new Liquibase releases on Chocolatey and automatically closes tracking issues when versions become available.
-
-### How it works
-
-* Automatically runs after the "Choco Build and Deploy" workflow completes successfully
-* Looks for open issues with the `chocolatey-tracking` label
-* Verifies if the tracked version is available on Chocolatey
-* Automatically closes tracking issues when versions are published
-* Sends Slack notifications for newly available versions
-
-### Setting up tracking issues
-
-To track a new release, create an issue with:
-
-* The `chocolatey-tracking` label
-* Version information in the body format: `- Version: X.Y.Z`
