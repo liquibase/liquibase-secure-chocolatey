@@ -1,0 +1,117 @@
+name: Chocolatey Release Tracking
+
+on:
+  workflow_run:
+    workflows: ["Choco Build and Deploy"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-chocolatey-releases:
+    runs-on: ubuntu-latest
+    # Only run if the deploy workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      has_updates: ${{ steps.check-releases.outputs.has_updates }}
+      status_message: ${{ steps.check-releases.outputs.status_message }}
+      status_color: ${{ steps.check-releases.outputs.status_color }}
+    steps:
+      - name: Check and close tracking issues
+        id: check-releases
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let updatedIssues = [];
+            
+            // Get all open issues with 'chocolatey-tracking' label
+            const issues = await github.rest.issues.listForRepo({
+              owner: 'liquibase',
+              repo: 'liquibase',
+              labels: 'chocolatey-tracking',
+              state: 'open'
+            });
+
+            console.log(`Found ${issues.data.length} open tracking issues`);
+
+            for (const issue of issues.data) {
+              console.log(`Processing issue #${issue.number}: ${issue.title}`);
+              
+              // Extract version from issue body
+              const versionMatch = issue.body.match(/- Version: ([\d\.]+)/);
+              if (!versionMatch) continue;
+              
+              const version = versionMatch[1];
+              
+              try {
+                // Check Chocolatey API for version
+                const response = await fetch(`https://community.chocolatey.org/api/v2/Packages?$filter=Id%20eq%20%27liquibase%27%20and%20Version%20eq%20%27${version}%27&$format=json`);
+                
+                if (!response.ok) {
+                  console.log(`Error checking Chocolatey API: ${response.status} ${response.statusText}`);
+                  continue;
+                }
+                
+                const data = await response.json();
+                const isAvailable = data.d && data.d.results && data.d.results.length > 0;
+                
+                if (isAvailable) {
+                  // Version is available on Chocolatey
+                  await github.rest.issues.createComment({
+                    owner: 'liquibase',
+                    repo: 'liquibase',
+                    issue_number: issue.number,
+                    body: `🎉 Liquibase v${version} is now available on Chocolatey!\n\nYou can install it using:\n\`\`\`\nchoco install liquibase --version ${version}\n\`\`\`\n\nClosing this tracking issue.`
+                  });
+                  
+                  await github.rest.issues.update({
+                    owner: 'liquibase',
+                    repo: 'liquibase',
+                    issue_number: issue.number,
+                    state: 'closed',
+                    state_reason: 'completed'
+                  });
+                  
+                  updatedIssues.push({
+                    version,
+                    available: true
+                  });
+                } else {
+                  console.log(`Version ${version} not yet available on Chocolatey`);
+                }
+              } catch (error) {
+                console.error(`Error checking Chocolatey for version ${version}: ${error.message}`);
+              }
+            }
+            
+            // Set outputs for notification
+            if (updatedIssues.length > 0) {
+              const message = updatedIssues
+                .map(status => `• Liquibase v${status.version}: ✅ Available on Chocolatey`)
+                .join('\n');
+              
+              core.setOutput('has_updates', 'true');
+              core.setOutput('status_message', message);
+              core.setOutput('status_color', 'good');
+            }
+
+  notify:
+    needs: check-chocolatey-releases
+    if: needs.check-chocolatey-releases.outputs.has_updates == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.DOCKER_SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL: chocolatey-updates
+          SLACK_USERNAME: Chocolatey Release Bot
+          SLACK_ICON_EMOJI: ':package:'
+          SLACK_TITLE: Chocolatey Release Update
+          SLACK_MESSAGE: ${{ needs.check-chocolatey-releases.outputs.status_message }}
+          SLACK_COLOR: ${{ needs.check-chocolatey-releases.outputs.status_color }}
