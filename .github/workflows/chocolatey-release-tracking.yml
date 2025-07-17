@@ -1,0 +1,98 @@
+name: Chocolatey Release Tracking
+
+on:
+  schedule:
+    # Run every midnight UTC
+    # This will check for the latest version of the package on Chocolatey and notify if it's approved
+    - cron: '0 0 * * *'
+  workflow_run:
+    workflows: ["Choco Build and Deploy"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  # check liquibase/liquibase repo for existence of ci-oss-choco-package-check branch. If it exists, only then run the check-chocolatey-availability job
+  check-placeholder-branch-exists:
+    runs-on: ubuntu-latest
+    outputs:
+      branch_exists: ${{ steps.check-placeholder-branch.outputs.branch_exists }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: liquibase/liquibase
+
+      - name: Check for placeholder branch
+        id: check-placeholder-branch
+        run: |
+          git fetch origin
+          if git show-ref --quiet refs/heads/ci-oss-choco-package-check; then
+            echo "branch_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "branch_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+  check-chocolatey-availability:
+    runs-on: ubuntu-latest
+    needs: check-placeholder-branch-exists
+    # Only run if the placeholder branch exists
+    if: ${{ needs.check-placeholder-branch-exists.outputs.branch_exists == 'true' }}
+    outputs:
+     version: ${{ steps.extract-package-details.outputs.version }}
+     approval_status: ${{ steps.extract-package-details.outputs.approval_status }}
+    steps:
+      - name: Fetch Chocolatey XML
+        run: |
+          curl -s "https://community.chocolatey.org/api/v2/Packages()?\$filter=Id%20eq%20'liquibase'%20and%20IsLatestVersion%20eq%20true" -o lb-choco.xml
+
+      - name: Extract package details
+        id: extract-package-details
+        run: |
+          VERSION=$(xmllint --xpath "string(//*[local-name()='Version'])" lb-choco.xml)
+          APPROVAL_STATUS=$(xmllint --xpath "string(//*[local-name()='PackageStatus'])" lb-choco.xml)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "approval_status=$APPROVAL_STATUS" >> $GITHUB_OUTPUT
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: liquibase/liquibase
+          ref: ci-oss-choco-package-check
+
+      # delete the placeholder branch if the package is approved
+      - name: Delete placeholder branch if approved
+        if: ${{ steps.extract-package-details.outputs.approval_status == 'Approved' }}
+        run: |
+          git push origin --delete ci-oss-choco-package-check || true
+        
+  notify:
+    needs: check-chocolatey-availability
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set slack color and message
+        id: set-slack-details
+        run: |
+          if [[ "${{ needs.check-chocolatey-availability.outputs.approval_status }}" == "Approved" ]]; then
+            echo "status_color=good" >> $GITHUB_OUTPUT
+            echo "status_message=Chocolatey package v.${{ needs.check-chocolatey-availability.outputs.version }} is approved and available." >> $GITHUB_OUTPUT
+          else
+            echo "status_color=#ffc107" >> $GITHUB_OUTPUT
+            echo "status_message=Chocolatey package v.${{ needs.check-chocolatey-availability.outputs.version }} has approval status: ${{ needs.check-chocolatey-availability.outputs.approval_status }}." >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ steps.set-slack-details.outputs.status_color }}
+          SLACK_MESSAGE: ${{ steps.set-slack-details.outputs.status_message }}
+          SLACK_TITLE: "LB choco package v.${{ steps.set-slack-details.outputs.version }} status check"
+          SLACK_USERNAME: liquibot
+          SLACK_WEBHOOK: ${{ secrets.LIQUIBASE_PACKAGE_DEPLOY_STATUS_WEBHOOK }}
+          SLACK_ICON_EMOJI: ":robot_face:"
+          SLACK_FOOTER: "${{ github.repository }}"
+          SLACK_LINK_NAMES: true

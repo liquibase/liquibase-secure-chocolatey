@@ -89,3 +89,34 @@ jobs:
         if: ${{ inputs.dry_run == false }}
         run: |
           choco push liquibase.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
+
+  # create a placeholder branch to check if tracking branch exists for this version
+  # Branch is created when package is submitted to Chocolatey
+  # Branch is deleted when package becomes available on Chocolatey
+  create-placeholder-branch:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.dry_run == true }}
+    steps:
+      - name: Get GitHub App token
+        id: get-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: liquibase
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: liquibase/liquibase
+          token: ${{ steps.get-token.outputs.token }} 
+
+      - name: Create placeholder branch
+        id: create-placeholder-branch
+        run: |
+          git fetch origin
+          git checkout -b ci-oss-choco-package-check
+          git push origin ci-oss-choco-package-check
+          echo "This is a placeholder branch for oss choco package v.${{ inputs.version }}. If this branch is open, it means the choco package is not yet approved" > README.md
+          
