@@ -93,7 +93,7 @@ jobs:
   # create a placeholder branch to check if tracking branch exists for this version
   # Branch is created when package is submitted to Chocolatey
   # Branch is deleted when package becomes available on Chocolatey
-  create-placeholder-branch:
+  create_placeholder_branch_choco:
     runs-on: ubuntu-latest
     if: ${{ inputs.dry_run == true }}
     steps:
@@ -112,8 +112,8 @@ jobs:
           repository: liquibase/liquibase
           token: ${{ steps.get-token.outputs.token }} 
 
-      - name: Create placeholder branch
-        id: create-placeholder-branch
+      - name: Create placeholder branch for choco
+        id: create-placeholder-branch-choco
         run: |
           git fetch origin
           git checkout -b ci-oss-choco-package-check
