@@ -1,0 +1,1 @@
+choco push liquibase-secure.@LIQUIBASE_VERSION@.nupkg -s https://chocolatey.org/ -apikey $env:CHOCO_APIKEY

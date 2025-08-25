@@ -1,19 +1,19 @@
 <?xml version = "1.0"?>
-<project name = "Liquibase chocolatey package build helper" 
+<project name = "Liquibase Secure chocolatey package build helper" 
          default = "info">
     <target name = "info" description="Show some infos about this build file.">
-        <echo>Ant build that helps preparing liquibase chocolatey releases.</echo>
+        <echo>Ant build that helps preparing liquibase-secure chocolatey releases.</echo>
     </target>
    
     <target name = "clean" description="Clean all build result files.">
         <echo>Cleaning generated NUGETS generated package (nupkg) and other dynamic build files like *.ps1.</echo>
         <delete>
-            <fileset dir="." includes="*.nupkg"/>
+            <fileset dir="." includes="*secure*.nupkg"/>
             <fileset dir="./work/" includes="*.asc"/>
             <fileset dir="./work/" includes="*.zip"/>
 			<fileset dir="./work/" includes="*.jar"/>
-            <fileset dir="." includes="*.nuspec"/>
-            <fileset dir="." includes="**/*.ps1"/>
+            <fileset dir="." includes="*secure*.nuspec"/>
+            <fileset dir="." includes="**/*secure*.ps1"/>
         </delete>
 		
     </target>
@@ -39,31 +39,31 @@
     </target>
     
     <target name="make-nuspec"
-            description="Prepare all files for a new Liquibase release."
+            description="Prepare all files for a new Liquibase Secure release."
             depends="load.sha512.as.property">
         <property environment="env"/>
-        <echo>Preparing &lt;liquibase.nuspec&gt; file : injecting liquibase version...</echo>
-        <copy file="templates/liquibase.nuspec.TEMPLATE" tofile="liquibase.nuspec"/>
+        <echo>Preparing &lt;liquibase-secure.nuspec&gt; file : injecting liquibase version...</echo>
+        <copy file="templates/liquibase-secure.nuspec.TEMPLATE" tofile="liquibase-secure.nuspec"/>
         <echo>Injecting target liquibase version in nuspec file...</echo>
-        <replace file="liquibase.nuspec" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
+        <replace file="liquibase-secure.nuspec" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>nuspec file prepared.</echo>
         
         <echo>Preparing &lt;chocolateyInstall.ps1&gt; ...</echo>
-        <copy file="templates/chocolateyInstall.ps1.TEMPLATE" tofile="tools/chocolateyInstall.ps1"/>
+        <copy file="templates/chocolateyInstall-secure.ps1.TEMPLATE" tofile="tools/chocolateyInstall.ps1"/>
         <replace file="tools/chocolateyInstall.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <replace file="tools/chocolateyInstall.ps1" token="@SHA512@" value="${sha512}"/>
         <echo>&lt;chocolateyInstall.ps1&gt; file prepared.</echo>
         
         <echo>Preparing &lt;chocolateyUninstall.ps1&gt; ...</echo>
-        <copy file="templates/chocolateyUninstall.ps1.TEMPLATE" tofile="tools/chocolateyUninstall.ps1"/>
+        <copy file="templates/chocolateyUninstall-secure.ps1.TEMPLATE" tofile="tools/chocolateyUninstall.ps1"/>
         <replace file="tools/chocolateyUninstall.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>&lt;chocolateyUninstall.ps1&gt; file prepared.</echo>
 		<echo>All build files prepared.</echo>
 		
-		<echo>Preparing &lt;release.ps1&gt; ...</echo>
-        <copy file="templates/release.ps1.TEMPLATE" tofile="release.ps1"/>
-        <replace file="release.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
-        <echo>&lt;release.ps1&gt; file prepared.</echo>
+		<echo>Preparing &lt;release-secure.ps1&gt; ...</echo>
+        <copy file="templates/release-secure.ps1.TEMPLATE" tofile="release-secure.ps1"/>
+        <replace file="release-secure.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
+        <echo>&lt;release-secure.ps1&gt; file prepared.</echo>
     </target>
 	
 </project>
