@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata>
+    <id>liquibase-secure</id>
+    <title>Liquibase Secure</title>
+    <version>@LIQUIBASE_VERSION@</version>
+    <authors>Liquibase</authors>
+    <owners>Liquibase</owners>
+    <summary>Liquibase Secure - The secure enterprise edition for tracking, managing, and applying database changes.</summary>
+    <description>
+Liquibase Secure is the enterprise-grade edition of Liquibase that provides advanced security features and capabilities for database change management. It includes enhanced security controls, enterprise integrations, and additional features for mission-critical database operations. Built on the proven Liquibase foundation for tracking, managing and applying database changes in a secure, enterprise environment.
+    </description>
+    <projectUrl>https://www.liquibase.com/</projectUrl>
+    <tags>db change management secure enterprise liquibase</tags>
+    <licenseUrl>https://github.com/liquibase/liquibase/blob/master/LICENSE.txt</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <iconUrl>https://raw.githubusercontent.com/liquibase/liquibase-secure-chocolatey/master/liquibase.png</iconUrl>
+    <packageSourceUrl>https://github.com/liquibase/liquibase-secure-chocolatey</packageSourceUrl>
+    <releaseNotes>https://github.com/liquibase/liquibase/releases/tag/v@LIQUIBASE_VERSION@</releaseNotes>
+    <docsUrl>https://docs.liquibase.com/</docsUrl>
+    <bugTrackerUrl>https://liquibase.jira.com/</bugTrackerUrl>
+    <projectSourceUrl>https://github.com/liquibase/liquibase</projectSourceUrl>
+    <mailingListUrl>https://www.liquibase.com/blog/</mailingListUrl>
+    <dependencies>
+      <dependency id="temurin17"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools\" />
+  </files>
+</package>

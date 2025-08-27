@@ -3,7 +3,7 @@ $content = Join-Path (Split-Path $tools) 'content'
 $bat = Join-Path $content 'liquibase.bat'
 
 Install-ChocolateyZipPackage `
-  -PackageName 'liquibase' `
+  -PackageName 'liquibase-secure' `
   -Url 'https://github.com/liquibase/liquibase/releases/download/v@LIQUIBASE_VERSION@/liquibase-@LIQUIBASE_VERSION@.zip' `
   -Checksum '@SHA512@' `
   -ChecksumType 'SHA512' `

@@ -1,4 +1,4 @@
-name: Choco Build and Deploy
+name: Choco Build and Deploy - Liquibase Secure
 
 on:
   workflow_dispatch:
@@ -33,7 +33,7 @@ on:
         type: string
 
 jobs:
-  build_and_deploy_choco:
+  build_and_deploy_choco_secure:
     runs-on: windows-latest
     env:
       LIQUIBASE_VERSION: ${{ inputs.version }}
@@ -44,7 +44,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          repository: liquibase/liquibase-chocolatey
+          repository: liquibase/liquibase-secure-chocolatey
 
       - name: Set up Java 17 (Temurin)
         uses: actions/setup-java@v3
@@ -62,12 +62,12 @@ jobs:
       - name: Install Ant
         run: choco install ant
 
-      - name: Build nupkg Chocolatey package
+      - name: Build nupkg Chocolatey Secure package
         if: ${{ inputs.dry_run == false }}
         run: |
-          ant make-nuspec
+          ant -f build_secure.xml make-nuspec
 
-      - name: Build nupkg Chocolatey package dry-run
+      - name: Build nupkg Chocolatey Secure package dry-run
         if: ${{ inputs.dry_run == true }}
         run: |
           ant -f build_dry_run.xml make-nuspec
@@ -82,18 +82,18 @@ jobs:
       - name: Choco install
         if: ${{ inputs.dry_run == false }}
         run: |
-          choco install liquibase --version="${{ inputs.version }}" --source="." --debug --verbose
+          choco install liquibase-secure --version="${{ inputs.version }}" --source="." --debug --verbose
           liquibase --version
 
       - name: Choco push
         if: ${{ inputs.dry_run == false }}
         run: |
-          choco push liquibase.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
+          choco push liquibase-secure.${{ inputs.version }}.nupkg --source "'https://push.chocolatey.org/'" --key "${{secrets.CHOCO_APIKEY}}" --debug --verbose
 
   # create a placeholder branch to check if tracking branch exists for this version
   # Branch is created when package is submitted to Chocolatey
   # Branch is deleted when package becomes available on Chocolatey
-  create_placeholder_branch_choco:
+  create_placeholder_branch_choco_secure:
     runs-on: ubuntu-latest
     if: ${{ inputs.dry_run == true }}
     steps:
@@ -112,11 +112,11 @@ jobs:
           repository: liquibase/liquibase
           token: ${{ steps.get-token.outputs.token }} 
 
-      - name: Create placeholder branch for choco
-        id: create-placeholder-branch-choco
+      - name: Create placeholder branch for choco secure
+        id: create-placeholder-branch-choco-secure
         run: |
           git fetch origin
-          git checkout -b ci-oss-choco-package-check
-          git push origin ci-oss-choco-package-check
-          echo "This is a placeholder branch for oss choco package v.${{ inputs.version }}. If this branch is open, it means the choco package is not yet approved" > README.md
+          git checkout -b ci-secure-choco-package-check
+          git push origin ci-secure-choco-package-check
+          echo "This is a placeholder branch for secure choco package v.${{ inputs.version }}. If this branch is open, it means the secure choco package is not yet approved" > README.md
           
