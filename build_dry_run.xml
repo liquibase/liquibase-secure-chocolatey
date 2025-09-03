@@ -67,13 +67,13 @@
         <echo>&lt;chocolateyInstall.ps1&gt; file prepared.</echo>
         
         <echo>Preparing &lt;chocolateyUninstall.ps1&gt; ...</echo>
-        <copy file="templates/chocolateyUninstall.ps1.TEMPLATE" tofile="tools/chocolateyUninstall.ps1"/>
+        <copy file="templates/chocolateyUninstall-secure.ps1.TEMPLATE" tofile="tools/chocolateyUninstall.ps1"/>
         <replace file="tools/chocolateyUninstall.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>&lt;chocolateyUninstall.ps1&gt; file prepared.</echo>
 		<echo>All build files prepared.</echo>
 		
 		<echo>Preparing &lt;release.ps1&gt; ...</echo>
-        <copy file="templates/release.ps1.TEMPLATE" tofile="release.ps1"/>
+        <copy file="templates/release-secure.ps1.TEMPLATE" tofile="release.ps1"/>
         <replace file="release.ps1" token="@LIQUIBASE_VERSION@" value="${env.LIQUIBASE_VERSION}"/>
         <echo>&lt;release.ps1&gt; file prepared.</echo>
     </target>
