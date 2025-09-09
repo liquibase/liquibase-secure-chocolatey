@@ -4,7 +4,7 @@ on:
   schedule:
     # Run every midnight UTC
     # This will check for the latest version of the package on Chocolatey and notify if it's approved
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   workflow_run:
     workflows: ["Choco Build and Deploy - Liquibase Secure"]
     types:
@@ -43,8 +43,8 @@ jobs:
     # Only run if the placeholder branch exists
     if: ${{ needs.check-placeholder-branch-exists.outputs.branch_exists == 'true' }}
     outputs:
-     version: ${{ steps.extract-package-details.outputs.version }}
-     approval_status: ${{ steps.extract-package-details.outputs.approval_status }}
+      version: ${{ steps.extract-package-details.outputs.version }}
+      approval_status: ${{ steps.extract-package-details.outputs.approval_status }}
     steps:
       - name: Fetch Chocolatey XML
         run: |
@@ -57,7 +57,7 @@ jobs:
           APPROVAL_STATUS=$(xmllint --xpath "string(//*[local-name()='PackageStatus'])" lb-choco-secure.xml)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "approval_status=$APPROVAL_STATUS" >> $GITHUB_OUTPUT
-      
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -69,7 +69,7 @@ jobs:
         if: ${{ steps.extract-package-details.outputs.approval_status == 'Approved' }}
         run: |
           git push origin --delete ci-secure-choco-package-check || true
-        
+
   notify:
     needs: check-chocolatey-availability
     runs-on: ubuntu-latest
@@ -85,6 +85,20 @@ jobs:
             echo "status_message=Chocolatey Secure package v.${{ needs.check-chocolatey-availability.outputs.version }} has approval status: ${{ needs.check-chocolatey-availability.outputs.approval_status }}." >> $GITHUB_OUTPUT
           fi
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
       - name: Send Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
@@ -92,7 +106,7 @@ jobs:
           SLACK_MESSAGE: ${{ steps.set-slack-details.outputs.status_message }}
           SLACK_TITLE: "LB Secure choco package v.${{ steps.set-slack-details.outputs.version }} status check"
           SLACK_USERNAME: liquibot
-          SLACK_WEBHOOK: ${{ secrets.LIQUIBASE_PACKAGE_DEPLOY_STATUS_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ env.LIQUIBASE_PACKAGE_DEPLOY_STATUS_WEBHOOK }}
           SLACK_ICON_EMOJI: ":robot_face:"
           SLACK_FOOTER: "${{ github.repository }}"
           SLACK_LINK_NAMES: true
