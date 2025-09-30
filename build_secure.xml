@@ -26,7 +26,7 @@
         https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip
     -->
 	<get 
-        src="https://github.com/liquibase/liquibase/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-${env.LIQUIBASE_VERSION}.zip"
+        src="https://github.com/liquibase/liquibase-pro/releases/download/v${env.LIQUIBASE_VERSION}/liquibase-secure-${env.LIQUIBASE_VERSION}.zip"
         dest="work/liquibase-${env.LIQUIBASE_VERSION}-bin.zip"/>
 	</target>
    
