@@ -14,7 +14,7 @@ Liquibase Secure is the enterprise-grade edition of Liquibase that provides adva
     <tags>db change management secure enterprise liquibase</tags>
     <licenseUrl>https://github.com/liquibase/liquibase/blob/master/LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <iconUrl>https://raw.githubusercontent.com/liquibase/liquibase-secure-chocolatey/master/liquibase.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/liquibase/liquibase-secure-chocolatey/main/liquibase.png</iconUrl>
     <packageSourceUrl>https://github.com/liquibase/liquibase-secure-chocolatey</packageSourceUrl>
     <releaseNotes>https://github.com/liquibase/liquibase/releases/tag/v@LIQUIBASE_VERSION@</releaseNotes>
     <docsUrl>https://docs.liquibase.com/</docsUrl>
